@@ -1,6 +1,6 @@
 import pygame
 pygame.init()
-screen = pygame.display.set_mode((1920, 1080), pygame.NOFRAME | pygame.FULLSCREEN, 16)
+screen = pygame.display.set_mode((1920, 1080), pygame.FULLSCREEN | pygame.NOFRAME, 16)
 
 
 class rpg_board(object):
@@ -41,15 +41,12 @@ class rpg_board(object):
 
 board = rpg_board(screen, 1000, 1000)
 
-
-
 finish = False
-while not finish:
 
+while not finish:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             finish = True
-
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_ESCAPE]:
