@@ -11,6 +11,8 @@ class rpg_board(object):
         self.end_x = start_x + 1920
         self.end_y = start_y + 1080
         self.image = pygame.image.load('level5.png')
+        self.image_width = pygame.self.image.get_size().get_width()
+        self.image_height = pygame.self.image.get_size().get_height()
         screen.blit(self.image, (0, 0), area=(self.start_x, self.start_y, self.end_x, self.end_y))
         pygame.display.update()
 
@@ -39,7 +41,18 @@ class rpg_board(object):
         self.end_x = self.end_x + 10
         self.print_image()
 
-board = rpg_board(screen, 1000, 1000)
+    def is_edge(self, direction):
+        if direction == 'up':
+            if self.start_y == 0:
+                return False
+            else:
+                return True
+        elif direction == 'down':
+            if self.end_y == self.image_height:
+
+
+
+board = rpg_board(screen, 0, 0)
 
 
 
