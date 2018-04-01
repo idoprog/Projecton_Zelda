@@ -2,10 +2,11 @@ import os
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = str(0) + "," + str(0)
 import pygame
-pygame.init()
-screen = pygame.display.set_mode((1920, 1080))
 
-image = pygame.image.load('Textures/Board/3/Board3.png')
+pygame.init()
+screen = pygame.display.set_mode((2000, 1100),pygame.NOFRAME,32)
+
+image = pygame.image.load('Textures/Board/3/Board3.png').convert()
 screen.blit(image, (0, 0))
 pygame.display.update()
 
