@@ -1,6 +1,10 @@
+import os
+
+os.environ['SDL_VIDEO_WINDOW_POS'] = str(0) + "," + str(0)
+
 import pygame
 pygame.init()
-screen = pygame.display.set_mode((1920, 1080), pygame.FULLSCREEN | pygame.NOFRAME, 16)
+screen = pygame.display.set_mode((1920, 1080), pygame.NOFRAME)
 global_step = 20
 
 class rpg_board(object):
@@ -10,15 +14,15 @@ class rpg_board(object):
         self.start_y = start_y
         self.end_x = start_x + 1920
         self.end_y = start_y + 1080
-        self.image = pygame.image.load('level5.png')
+        self.image = pygame.image.load('Textures/Board/3/Board3.png').convert()
         self.image_width = self.image.get_width()
         self.image_height = self.image.get_height()
         screen.blit(self.image, (0, 0), area=(self.start_x, self.start_y, self.end_x, self.end_y))
         pygame.display.update()
 
     def print_image(self):
-        screen.fill((255, 255, 255))
-        screen.blit(self.image, (0, 0), area=(self.start_x, self.start_y, self.end_x, self.end_y))
+        self.screen.fill((255, 255, 255))
+        self.screen.blit(self.image, (0, 0), area=(self.start_x, self.start_y, self.end_x, self.end_y))
         pygame.display.update()
 
     def move_up(self, steps):
@@ -100,7 +104,7 @@ class rpg_board(object):
                 return True
 
 
-board = rpg_board(screen, 1000, 1000)
+board = rpg_board(screen, 0, 0)
 finish = False
 while not finish:
     for event in pygame.event.get():
