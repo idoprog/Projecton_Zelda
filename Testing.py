@@ -1,27 +1,12 @@
-import os
-
-os.environ['SDL_VIDEO_WINDOW_POS'] = str(0) + "," + str(0)
-import pygame
-
-pygame.init()
-screen = pygame.display.set_mode((2000, 1100),pygame.NOFRAME,32)
-
-image = pygame.image.load('Textures/Board/3/Board3.png').convert()
-screen.blit(image, (0, 0))
-pygame.display.update()
+class lol(object):
+    def __init__(self, noob, length):
+        self.noob = noob
+        self.length = length
 
 
 
-finish = False
-while not finish:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            finish = True
-
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_ESCAPE]:
-        finish = True
 
 
-
-pygame.quit()
+class lel(lol):
+    def __init__(self):
+        super(lel, self).__init__(3,5)

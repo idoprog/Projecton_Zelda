@@ -7,56 +7,71 @@ pygame.init()
 screen = pygame.display.set_mode((1280, 720),pygame.NOFRAME,32)
 
 
-class rpg_board(object):
-    def __init__(self, screen, start_x=0, start_y=0):
-        self.screen = screen
-        self.start_x = start_x
-        self.start_y = start_y
-        self.end_x = start_x + 1280
-        self.end_y = start_y + 720
+class rpg_board(pygame.Rect):
+    def __init__(self, start_x=0, start_y=0):
+        super(rpg_board, self).__init__(start_x, start_y, start_x + 1280, start_y + 720)
         self.image = pygame.image.load('Textures/Board/3/Board3.png').convert()
         self.image_width = self.image.get_width()
         self.image_height = self.image.get_height()
-        screen.blit(self.image, (0, 0), area=(0, 0, 1280, 720))
+        screen.blit(self.image, (0, 0), area=(self.left, self.top, self.width, self.height))
         pygame.display.update()
 
-    def print_image(self):
-        self.screen.fill((255, 255, 255))
-        self.screen.blit(self.image, (0, 0), area=(self.start_x, self.start_y, self.end_x, self.end_y))
-        pygame.display.update()
+    def blit_image(self):
+        screen.fill((255, 255, 255))
+        screen.blit(self.image, (0, 0), area=(self.left, self.top, self.width, self.height))
+
 
     def move_up(self):
-        if self.start_y - 10 == 0:
+        if self.top - 10 == 0:
             return
-        self.start_y = self.start_y-10
-        self.end_y = self.end_y -10
-        self.print_image()
+        self.top = self.top-10
+        self.height = self.height -10
+        self.blit_image()
 
     def move_down(self):
-        if self.end_y + 10 == self.image_height:
+        if self.height + 10 == self.image_height:
             return
-        self.end_y = self.end_y + 10
-        self.start_y = self.start_y + 10
-        self.print_image()
+        self.height = self.height + 10
+        self.top = self.top + 10
+        self.blit_image()
 
     def move_left(self):
-        if self.start_x - 10 == 0:
+        if self.left - 10 == 0:
             return
-        self.start_x = self.start_x - 10
-        self.end_x = self.end_x - 10
-        self.print_image()
+        self.left = self.left - 10
+        self.width = self.width - 10
+        self.blit_image()
 
     def move_right(self):
-        if self.end_x + 10 == self.image_width:
+        if self.width + 10 == self.image_width:
             return
-        self.end_x = self.end_x + 10
-        self.start_x = self.start_x + 10
-        self.print_image()
+        self.width = self.width + 10
+        self.left = self.left + 10
+        self.blit_image()
 
 
+board = rpg_board(0, 0)
 
 
-board = rpg_board(screen, 0, 0)
+class main_character(rpg_board):
+    def __init__(self,start_x, start_y):
+        super(rpg_board, self).__init__(start_x, start_y, start_x + 80, start_y + 80)
+
+    def image_bliting(self, image_loc, pos_x, pos_y):
+        screen.blit(pygame.image.load(image_loc),(pos_x, pos_y))
+
+    def breath(self, state):
+        board.blit_image()
+        if(state):
+            self.image_bliting('Textures/Skins/Main_Char/Animation/B/B1.png', self.left, self.top)
+            return False
+        else:
+            self.image_bliting('Textures/Skins/Main_Char/Animation/B/B2.png', self.left, self.top)
+            return True
+
+char = main_character(600,320)
+
+state = True
 finish = False
 while not finish:
     for event in pygame.event.get():
@@ -74,5 +89,9 @@ while not finish:
         board.move_left()
     elif keys[pygame.K_d]:
         board.move_right()
+    else:
+        state = char.breath(state)
 
+    pygame.display.update()
+    pygame.time.delay(1000)
 pygame.quit()
