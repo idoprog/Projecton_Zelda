@@ -1,10 +1,10 @@
-import os
 
-os.environ['SDL_VIDEO_WINDOW_POS'] = str(0) + "," + str(0)
 
 import pygame
 pygame.init()
-screen = pygame.display.set_mode((1280, 720),pygame.NOFRAME,32)
+
+
+screen = pygame.display.set_mode((1280, 720), pygame.NOFRAME | pygame.FULLSCREEN, 32)
 
 
 class rpg_board(pygame.Rect):
