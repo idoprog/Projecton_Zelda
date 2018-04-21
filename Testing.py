@@ -4,7 +4,9 @@ pygame.init()
 
 screen = pygame.display.set_mode((1280, 720), pygame.NOFRAME | pygame.FULLSCREEN, 32)
 image = pygame.image.load('Textures\Skins\Main_Char\MC_S.png')
-
+lol = pygame.display.get_surface()
+print lol.get_width()
+print lol.get_height()
 screen.blit(pygame.transform.rotate(image, 90), (100, 100))
 screen.blit(pygame.transform.rotate(image, 180), (500, 500))
 pygame.display.update()
