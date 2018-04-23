@@ -41,6 +41,7 @@ class main_character(Sprite):
         screen.blit(pygame.transform.rotate(pygame.image.load(image_loc), angle), (pos_x, pos_y))
 
 
+
     def breath(self):
         board.blit_board()
         state = False
@@ -112,7 +113,7 @@ class Barriers(object):
         for x in xrange(steps):
             sprite.board_pos.left += 1
             if sprite.board_pos.collidelist(self.walls_arr) != -1:
-                sprite.board_pos.top -= 1
+                sprite.board_pos.left -= 1
                 return x
         return steps
 
@@ -120,7 +121,7 @@ class Barriers(object):
         for x in xrange(steps):
             sprite.board_pos.left -= 1
             if sprite.board_pos.collidelist(self.walls_arr) != -1:
-                sprite.board_pos.top += 1
+                sprite.board_pos.left += 1
                 return x
         return steps
 
@@ -142,6 +143,7 @@ class rpg_board(pygame.Rect):
     def move_up(self):
         real_step = self.Barriers.can_pass_up(self.char, char_steps)
         if real_step == 0:
+            self.char.direction = 1
             self.char.breath()
             return
         self.top = self.top - real_step
@@ -152,6 +154,7 @@ class rpg_board(pygame.Rect):
     def move_down(self):
         real_step = self.Barriers.can_pass_down(self.char, char_steps)
         if real_step == 0:
+            self.char.direction = 3
             self.char.breath()
             return
         self.top = self.top + real_step
@@ -162,6 +165,7 @@ class rpg_board(pygame.Rect):
     def move_left(self):
         real_step = self.Barriers.can_pass_left(self.char, char_steps)
         if real_step == 0:
+            self.char.direction = 4
             self.char.breath()
             return
         self.left = self.left - real_step
@@ -172,6 +176,7 @@ class rpg_board(pygame.Rect):
     def move_right(self):
         real_step = self.Barriers.can_pass_right(self.char, char_steps)
         if real_step == 0:
+            self.char.direction = 2
             self.char.breath()
             return
         self.left = self.left + real_step
