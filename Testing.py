@@ -5,8 +5,12 @@ pygame.init()
 screen = pygame.display.set_mode((1280, 720), pygame.NOFRAME | pygame.FULLSCREEN, 32)
 image = pygame.image.load('Textures\Skins\Main_Char\MC_S.png')
 lol = pygame.display.get_surface()
-print lol.get_width()
-print lol.get_height()
+rect1 = pygame.Rect(1640, 1360, 1721, 1440)
+rect2 = pygame.Rect(1000, 1180, 1129, 3899)
+rect3 = pygame.Rect(1120, 1200, 1130, 1300)
+print rect1.colliderect(rect2)
+print rect3.colliderect(rect2)
+
 screen.blit(pygame.transform.rotate(image, 90), (100, 100))
 screen.blit(pygame.transform.rotate(image, 180), (500, 500))
 pygame.display.update()
@@ -17,7 +21,6 @@ while not finish:
             finish = True
 
     keys = pygame.key.get_pressed()
-    print keys
     if keys[pygame.K_ESCAPE]:
         finish = True
 

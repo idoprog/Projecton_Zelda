@@ -8,64 +8,13 @@ if width > 1280:
 if height > 720:
     height = 720
 screen = pygame.display.set_mode((width, height), pygame.NOFRAME | pygame.FULLSCREEN, 32)
-steps = 5
+char_steps = 5
 
-class rpg_board(pygame.Rect):
-    def __init__(self, start_x=0, start_y=0):
-        super(rpg_board, self).__init__(start_x, start_y, start_x + width, start_y + height)
-        self.image = pygame.image.load('Textures/Board/3/Board3.png').convert()
-        self.image_width = self.image.get_width()
-        self.image_height = self.image.get_height()
-        screen.blit(self.image, (0, 0), area=(self.left, self.top, self.width, self.height))
-        pygame.display.update()
-
-    def blit_board(self):
-        screen.fill((255, 255, 255))
-        screen.blit(self.image, (0, 0), area=(self.left, self.top, self.width, self.height))
-
-    def move_up(self, steps):
-        if self.top - steps == 0:
-            return
-        self.top = self.top - steps
-        self.height = self.height - steps
-        self.blit_board()
-        char.walk(1)
-        pygame.display.update()
-
-    def move_down(self, steps):
-        if self.height + steps == self.image_height:
-            return
-        self.height = self.height + steps
-        self.top = self.top + steps
-        self.blit_board()
-        char.walk(3)
-        pygame.display.update()
-
-    def move_left(self, steps):
-        if self.left - steps == 0:
-            return
-        self.left = self.left - steps
-        self.width = self.width - steps
-        self.blit_board()
-        char.walk(4)
-        pygame.display.update()
-
-    def move_right(self, steps):
-        if self.width + steps == self.image_width:
-            return
-        self.width = self.width + steps
-        self.left = self.left + steps
-        self.blit_board()
-        char.walk(2)
-        pygame.display.update()
-
-
-board = rpg_board(130, 920)
 
 class Sprite(object):
     def __init__(self, screen_pos_x, screen_pos_y, board_pos_x, board_pos_y, char_width, char_height):
-        self.screen_pos = pygame.Rect(screen_pos_x, screen_pos_y, screen_pos_x + char_width, screen_pos_y + char_height)
-        self.board_pos = pygame.Rect(board_pos_x, board_pos_y, board_pos_x + char_width, board_pos_y + char_height)
+        self.screen_pos = pygame.Rect(screen_pos_x, screen_pos_y, char_width, char_height)
+        self.board_pos = pygame.Rect(board_pos_x, board_pos_y, char_width, char_height)
         self.direction = None
 
     def calc_angle(self):
@@ -81,7 +30,7 @@ class Sprite(object):
 
 class main_character(Sprite):
     def __init__(self, start_x, start_y):
-        super(main_character, self).__init__(start_x, start_y, start_x, start_y + 3000, 81, 80)  # going to the father of rpg_board (pygame.Rect())
+        super(main_character, self).__init__(start_x, start_y, start_x + 1000, start_y + 1000, 81, 80)  # going to the father of rpg_board (pygame.Rect())
         self.direction = 1
         self.moving_seq = 1
 
@@ -126,9 +75,112 @@ class main_character(Sprite):
                     return
 
 
-char = main_character(width / 2, height / 2)
+class Barriers(object):
+    def __init__(self):
+        self.walls_arr = []
+        self.misc_arr = []
+        self.enemy_arr = []
+        # walls adding, numbers according to the wall mapping picture
+        # wall 1
+        self.walls_arr.append(pygame.Rect(1000, 1180, 129, 2719))
+        # wall 2
+        self.walls_arr.append(pygame.Rect(1130, 1000, 7799, 179))
+        # wall 3A
+        self.walls_arr.append(pygame.Rect(8930, 1180, 66, 1249))
+        # wall 3B
+        self.walls_arr.append(pygame.Rect(8930, 2820, 66, 1079))
+        # wall 4
+        self.walls_arr.append(pygame.Rect(1130, 3900, 7799, 99))
+
+    def can_pass_up(self, sprite, steps):
+        for x in xrange(steps):
+            sprite.board_pos.top -= 1
+            if sprite.board_pos.collidelist(self.walls_arr) != -1:
+                sprite.board_pos.top += 1
+                return x
+        return steps
+
+    def can_pass_down(self, sprite, steps):
+        for x in xrange(steps):
+            sprite.board_pos.top += 1
+            if sprite.board_pos.collidelist(self.walls_arr) != -1:
+                sprite.board_pos.top -= 1
+                return x
+        return steps
+
+    def can_pass_right(self, sprite, steps):
+        for x in xrange(steps):
+            sprite.board_pos.left += 1
+            if sprite.board_pos.collidelist(self.walls_arr) != -1:
+                sprite.board_pos.top -= 1
+                return x
+        return steps
+
+    def can_pass_left(self, sprite, steps):
+        for x in xrange(steps):
+            sprite.board_pos.left -= 1
+            if sprite.board_pos.collidelist(self.walls_arr) != -1:
+                sprite.board_pos.top += 1
+                return x
+        return steps
+
+class rpg_board(pygame.Rect):
+    def __init__(self, start_x=0, start_y=0):
+        super(rpg_board, self).__init__(start_x, start_y, start_x + width, start_y + height)
+        self.image = pygame.image.load('Textures/Board/3/Board3.png').convert()
+        self.image_width = self.image.get_width()
+        self.image_height = self.image.get_height()
+        screen.blit(self.image, (0, 0), area=(self.left, self.top, self.width, self.height))
+        pygame.display.update()
+        self.Barriers = Barriers()
+        self.char = main_character(width / 2, height / 2)
+
+    def blit_board(self):
+        screen.fill((255, 255, 255))
+        screen.blit(self.image, (0, 0), area=(self.left, self.top, self.width, self.height))
+
+    def move_up(self):
+        real_step = self.Barriers.can_pass_up(self.char, char_steps)
+        if real_step == 0:
+            self.char.breath()
+            return
+        self.top = self.top - real_step
+        self.blit_board()
+        self.char.walk(1)
+        pygame.display.update()
+
+    def move_down(self):
+        real_step = self.Barriers.can_pass_down(self.char, char_steps)
+        if real_step == 0:
+            self.char.breath()
+            return
+        self.top = self.top + real_step
+        self.blit_board()
+        self.char.walk(3)
+        pygame.display.update()
+
+    def move_left(self):
+        real_step = self.Barriers.can_pass_left(self.char, char_steps)
+        if real_step == 0:
+            self.char.breath()
+            return
+        self.left = self.left - real_step
+        self.blit_board()
+        self.char.walk(4)
+        pygame.display.update()
+
+    def move_right(self):
+        real_step = self.Barriers.can_pass_right(self.char, char_steps)
+        if real_step == 0:
+            self.char.breath()
+            return
+        self.left = self.left + real_step
+        self.blit_board()
+        self.char.walk(2)
+        pygame.display.update()
 
 
+board = rpg_board(1000, 1000)
 finish = False
 while not finish:
     for event in pygame.event.get():
@@ -139,15 +191,15 @@ while not finish:
     if keys[pygame.K_ESCAPE]:
         finish = True
     if keys[pygame.K_w]:
-        board.move_up(steps)
+        board.move_up()
     elif keys[pygame.K_s]:
-        board.move_down(steps)
+        board.move_down()
     elif keys[pygame.K_a]:
-        board.move_left(steps)
+        board.move_left()
     elif keys[pygame.K_d]:
-        board.move_right(steps)
+        board.move_right()
     else:
-        char.breath()
+        board.char.breath()
 
 
 pygame.quit()
