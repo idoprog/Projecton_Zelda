@@ -92,6 +92,54 @@ class Barriers(object):
         self.walls_arr.append(pygame.Rect(8930, 2820, 66, 1079))
         # wall 4
         self.walls_arr.append(pygame.Rect(1130, 3900, 7799, 99))
+        # wall 5
+        self.walls_arr.append(pygame.Rect(5630, 1180, 89, 499))
+        # wall 6
+        self.walls_arr.append(pygame.Rect(3540, 1500, 2089, 179))
+        # wall 7
+        self.walls_arr.append(pygame.Rect(3430, 1500, 99, 499))
+        # wall 8
+        self.walls_arr.append(pygame.Rect(2630, 1180, 89, 819))
+        # wall 9
+        self.walls_arr.append(pygame.Rect(1130, 1930, 869, 89))
+        # wall 10
+        self.walls_arr.append(pygame.Rect(1820, 1180, 109, 319))
+        # wall 11
+        self.walls_arr.append(pygame.Rect(6220, 1180, 99, 889))
+        # wall 12
+        self.walls_arr.append(pygame.Rect(4110, 1930, 2109, 139))
+        # wall 13
+        self.walls_arr.append(pygame.Rect(7220, 1180, 99, 889))
+        # wall 14
+        self.walls_arr.append(pygame.Rect(7720, 1431, 1209, 138))
+        # wall 15
+        self.walls_arr.append(pygame.Rect(8000, 1820, 900, 149))
+        # wall 16
+        self.walls_arr.append(pygame.Rect(8000, 1970, 129, 99))
+        # wall 17
+        self.walls_arr.append(pygame.Rect(8220, 2320, 709, 109))
+        # wall 18
+        self.walls_arr.append(pygame.Rect(8220, 2820, 709, 149))
+        # wall 19
+        self.walls_arr.append(pygame.Rect(7820, 3220, 109, 679))
+        # wall 20
+        self.walls_arr.append(pygame.Rect(5320, 3220, 1998, 159))
+        # wall 21
+        self.walls_arr.append(pygame.Rect(5320, 3380, 109, 519))
+        # wall 22
+        self.walls_arr.append(pygame.Rect(4630, 3220, 109, 679))
+        # wall 23
+        self.walls_arr.append(pygame.Rect(3610, 3220, 109, 679))
+        # wall 24
+        self.walls_arr.append(pygame.Rect(2320, 3220, 899, 159))
+        # wall 25
+        self.walls_arr.append(pygame.Rect(2320, 3380, 109, 519))
+        # wall 26
+        self.walls_arr.append(pygame.Rect(1130, 3220, 869, 99))
+        # wall 27: Door
+        self.walls_arr.append(pygame.Rect(8930, 2430, 66, 389))
+
+
 
     def can_pass_up(self, sprite, steps):
         for x in xrange(steps):
@@ -205,6 +253,7 @@ while not finish:
         board.move_right()
     else:
         board.char.breath()
+
 
 
 pygame.quit()
