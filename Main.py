@@ -34,13 +34,9 @@ class main_character(Sprite):
         self.direction = 1
         self.moving_seq = 1
 
-
-
     @staticmethod
     def image_bliting(image_loc, pos_x, pos_y, angle):
         screen.blit(pygame.transform.rotate(pygame.image.load(image_loc), angle), (pos_x, pos_y))
-
-
 
     def breath(self):
         board.blit_board()
@@ -81,6 +77,9 @@ class Barriers(object):
         self.walls_arr = []
         self.misc_arr = []
         self.enemy_arr = []
+        self.wall_array_init()
+
+    def wall_array_init(self):
         # walls adding, numbers according to the wall mapping picture
         # wall 1
         self.walls_arr.append(pygame.Rect(1000, 1180, 129, 2719))
@@ -138,8 +137,6 @@ class Barriers(object):
         self.walls_arr.append(pygame.Rect(1130, 3220, 869, 99))
         # wall 27: Door
         self.walls_arr.append(pygame.Rect(8930, 2430, 66, 389))
-
-
 
     def can_pass_up(self, sprite, steps):
         for x in xrange(steps):
@@ -253,7 +250,6 @@ while not finish:
         board.move_right()
     else:
         board.char.breath()
-
 
 
 pygame.quit()
