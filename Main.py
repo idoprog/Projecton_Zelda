@@ -77,9 +77,10 @@ class Barriers(object):
         self.walls_arr = []
         self.misc_arr = []
         self.enemy_arr = []
-        self.wall_array_init()
+        self.wall_arr_init()
+        self.misc_arr_init()
 
-    def wall_array_init(self):
+    def wall_arr_init(self):
         # walls adding, numbers according to the wall mapping picture
         # wall 1
         self.walls_arr.append(pygame.Rect(1000, 1180, 129, 2719))
@@ -138,10 +139,60 @@ class Barriers(object):
         # wall 27: Door
         self.walls_arr.append(pygame.Rect(8930, 2430, 66, 389))
 
+    def misc_arr_init(self):
+        # misc 1: Rock
+        self.misc_arr.append(pygame.Rect(1130, 1179, 200, 181))
+        # misc 2: Rock
+        self.misc_arr.append(pygame.Rect(1130, 1369, 60, 91))
+        # misc 3: Rock
+        self.misc_arr.append(pygame.Rect(1130, 2299, 100, 291))
+        # misc 4: Rock
+        self.misc_arr.append(pygame.Rect(1130, 2989, 100, 191))
+        # misc 5: Rock
+        self.misc_arr.append(pygame.Rect(2079, 3719, 240, 180))
+        # misc 6: Rock
+        self.misc_arr.append(pygame.Rect(3359, 3759, 250, 140))
+        # misc 7: Rock
+        self.misc_arr.append(pygame.Rect(3720, 3500, 190, 399))
+        # misc 8: Rock
+        self.misc_arr.append(pygame.Rect(5430, 3749, 130, 150))
+        # misc 9: Rock
+        self.misc_arr.append(pygame.Rect(7519, 3629, 271, 182))
+        # misc 10: Rock
+        self.misc_arr.append(pygame.Rect(7369, 3779, 450, 120))
+        # misc 11: Rock
+        self.misc_arr.append(pygame.Rect(7930, 3819, 30, 80))
+        # misc 12: Rock
+        self.misc_arr.append(pygame.Rect(8660, 3709, 269, 190))
+        # misc 13: Rock
+        self.misc_arr.append(pygame.Rect(8749, 1570, 180, 140))
+        # misc 14: Rock
+        self.misc_arr.append(pygame.Rect(8609, 1570, 61, 40))
+        # misc 15: Rock
+        self.misc_arr.append(pygame.Rect(7049, 1180, 121, 140))
+        # misc 16: Rock
+        self.misc_arr.append(pygame.Rect(6099, 2149, 141, 101))
+        # misc 17: Rock
+        self.misc_arr.append(pygame.Rect(6249, 2089, 141, 101))
+        # misc 18: Rock
+        self.misc_arr.append(pygame.Rect(4029, 2079, 161, 81))
+        # misc 19: Rock
+        self.misc_arr.append(pygame.Rect(4249, 2079, 121, 71))
+        # misc 20: Rock
+        self.misc_arr.append(pygame.Rect(2559, 2789, 141, 111))
+        # misc 21: Rock
+        self.misc_arr.append(pygame.Rect(2709, 2649, 261, 171))
+        # misc 22: Rock
+        self.misc_arr.append(pygame.Rect(6609, 3059, 431, 121))
+        # misc 23: Rock + Webs
+        self.misc_arr.append(pygame.Rect(2720, 1179, 80, 141))
+        # misc 24: Statue
+        self.misc_arr.append(pygame.Rect(4409, 2460, 701, 340))
+
     def can_pass_up(self, sprite, steps):
         for x in xrange(steps):
             sprite.board_pos.top -= 1
-            if sprite.board_pos.collidelist(self.walls_arr) != -1:
+            if sprite.board_pos.collidelist(self.walls_arr) != -1 or sprite.board_pos.collidelist(self.misc_arr) != -1:
                 sprite.board_pos.top += 1
                 return x
         return steps
@@ -149,7 +200,7 @@ class Barriers(object):
     def can_pass_down(self, sprite, steps):
         for x in xrange(steps):
             sprite.board_pos.top += 1
-            if sprite.board_pos.collidelist(self.walls_arr) != -1:
+            if sprite.board_pos.collidelist(self.walls_arr) != -1 or sprite.board_pos.collidelist(self.misc_arr) != -1:
                 sprite.board_pos.top -= 1
                 return x
         return steps
@@ -157,7 +208,7 @@ class Barriers(object):
     def can_pass_right(self, sprite, steps):
         for x in xrange(steps):
             sprite.board_pos.left += 1
-            if sprite.board_pos.collidelist(self.walls_arr) != -1:
+            if sprite.board_pos.collidelist(self.walls_arr) != -1 or sprite.board_pos.collidelist(self.misc_arr) != -1:
                 sprite.board_pos.left -= 1
                 return x
         return steps
@@ -165,7 +216,7 @@ class Barriers(object):
     def can_pass_left(self, sprite, steps):
         for x in xrange(steps):
             sprite.board_pos.left -= 1
-            if sprite.board_pos.collidelist(self.walls_arr) != -1:
+            if sprite.board_pos.collidelist(self.walls_arr) != -1 or sprite.board_pos.collidelist(self.misc_arr) != -1:
                 sprite.board_pos.left += 1
                 return x
         return steps
