@@ -10,12 +10,19 @@ if height > 720:
 screen = pygame.display.set_mode((width, height), pygame.NOFRAME | pygame.FULLSCREEN, 32)
 char_steps = 5
 
+main_group = pygame.sprite.Group()
+orc_group = pygame.sprite.Group()
 
-class Sprite(object):
+class Sprite(pygame.sprite.Sprite):
     def __init__(self, screen_pos_x, screen_pos_y, board_pos_x, board_pos_y, char_width, char_height):
+        super(Sprite, self).__init__()
         self.screen_pos = pygame.Rect(screen_pos_x, screen_pos_y, char_width, char_height)
         self.board_pos = pygame.Rect(board_pos_x, board_pos_y, char_width, char_height)
         self.direction = None
+
+    @staticmethod
+    def image_bliting(image_loc, pos_x, pos_y, angle):
+        screen.blit(pygame.transform.rotate(pygame.image.load(image_loc), angle), (pos_x, pos_y))
 
     def calc_angle(self):
         if self.direction == 1:
@@ -33,10 +40,21 @@ class main_character(Sprite):
         super(main_character, self).__init__(start_x, start_y, start_x + 1000, start_y + 1000, 81, 80)  # going to the father of rpg_board (pygame.Rect())
         self.direction = 1
         self.moving_seq = 1
+        self.add(main_group)
+        self.dirty = 2
 
-    @staticmethod
-    def image_bliting(image_loc, pos_x, pos_y, angle):
-        screen.blit(pygame.transform.rotate(pygame.image.load(image_loc), angle), (pos_x, pos_y))
+    def update(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_w]:
+            board.move_up()
+        elif keys[pygame.K_s]:
+            board.move_down()
+        elif keys[pygame.K_a]:
+            board.move_left()
+        elif keys[pygame.K_d]:
+            board.move_right()
+        else:
+            board.char.breath()
 
     def breath(self):
         board.blit_board()
@@ -288,19 +306,9 @@ while not finish:
         if event.type == pygame.QUIT:
             finish = True
 
+    board.char.update()
     keys = pygame.key.get_pressed()
     if keys[pygame.K_ESCAPE]:
         finish = True
-    if keys[pygame.K_w]:
-        board.move_up()
-    elif keys[pygame.K_s]:
-        board.move_down()
-    elif keys[pygame.K_a]:
-        board.move_left()
-    elif keys[pygame.K_d]:
-        board.move_right()
-    else:
-        board.char.breath()
-
 
 pygame.quit()
