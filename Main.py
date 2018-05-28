@@ -42,36 +42,44 @@ class main_character(Sprite):
         self.moving_seq = 1
         self.add(main_group)
         self.dirty = 2
+        self.state = None
+        self.normal_image = 'Textures/Skins/Main_Char/MC_S.png'
+
+    def update_normal(self):
+        board.blit_board()
+        self.image_bliting(self.normal_image, self.screen_pos.left, self.screen_pos.top, self.calc_angle())
+        pygame.display.update()
 
     def update(self):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_w]:
-            board.move_up()
-        elif keys[pygame.K_s]:
-            board.move_down()
-        elif keys[pygame.K_a]:
-            board.move_left()
-        elif keys[pygame.K_d]:
-            board.move_right()
+        if keys[pygame.K_w] or keys[pygame.K_s] or keys[pygame.K_a] or keys[pygame.K_d]:
+            if keys[pygame.K_w]:
+                board.move_up()
+            elif keys[pygame.K_s]:
+                board.move_down()
+            elif keys[pygame.K_a]:
+                board.move_left()
+            elif keys[pygame.K_d]:
+                board.move_right()
+            pygame.display.update()
         else:
             board.char.breath()
 
+
     def breath(self):
         board.blit_board()
-        state = False
-        while True:
-            if state:
-                self.image_bliting('Textures/Skins/Main_Char/Animation/B/B1.png', self.screen_pos.left, self.screen_pos.top, self.calc_angle())
-                state = False
-            else:
-                self.image_bliting('Textures/Skins/Main_Char/Animation/B/B2.png', self.screen_pos.left, self.screen_pos.top, self.calc_angle())
-                state = True
-            pygame.display.update()
-            for x in range(1000):
-                pygame.time.delay(1)
-                for event in pygame.event.get():
-                    if event.type == pygame.KEYDOWN:
-                        return
+        if self.state == 1:
+            self.image_bliting('Textures/Skins/Main_Char/Animation/B/B1.png', self.screen_pos.left, self.screen_pos.top, self.calc_angle())
+            self.state = 2
+        else:
+            self.image_bliting('Textures/Skins/Main_Char/Animation/B/B2.png', self.screen_pos.left, self.screen_pos.top, self.calc_angle())
+            self.state = 1
+        pygame.display.update()
+        for x in range(1000):
+            pygame.time.delay(1)
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    return
 
     def walk(self, d):
         if self.direction == d:
@@ -87,7 +95,31 @@ class main_character(Sprite):
             pygame.time.delay(1)
             for event in pygame.event.get():
                 if event.type == pygame.KEYUP:
+                    self.update_normal()
                     return
+
+
+class Orcs(Sprite):
+    def __init__(self):
+        self.direction = 1
+        super(Orcs, self).__init__(0, 0, 6000, 2000, 87, 64)
+        self.add(orc_group)
+
+
+    def visible(self):
+        if self.board_pos.colliderect(board.shown):
+            return True
+        else:
+            return False
+
+    def calc_board_pos(self):
+        self.screen_pos.left = int(self.board_pos.left) - int(board.shown.left)
+        self.screen_pos.top = int(self.board_pos.top) - int(board.shown.top)
+
+    def update(self):
+        if self.visible():
+            self.calc_board_pos()
+            self.image_bliting('Textures/Skins/Orcs/1/Orc_S1.png', self.screen_pos.left, self.screen_pos.top, self.calc_angle())
 
 
 class Barriers(object):
@@ -239,20 +271,20 @@ class Barriers(object):
                 return x
         return steps
 
-class rpg_board(pygame.Rect):
+class rpg_board(object):
     def __init__(self, start_x=0, start_y=0):
-        super(rpg_board, self).__init__(start_x, start_y, start_x + width, start_y + height)
+        self.shown = pygame.Rect(start_x, start_y, start_x + width, start_y + height)
         self.image = pygame.image.load('Textures/Board/3/Board3.png').convert()
         self.image_width = self.image.get_width()
         self.image_height = self.image.get_height()
-        screen.blit(self.image, (0, 0), area=(self.left, self.top, self.width, self.height))
+        screen.blit(self.image, (0, 0), area=(self.shown.left, self.shown.top, self.shown.width, self.shown.height))
         pygame.display.update()
         self.Barriers = Barriers()
         self.char = main_character(width / 2, height / 2)
 
     def blit_board(self):
         screen.fill((255, 255, 255))
-        screen.blit(self.image, (0, 0), area=(self.left, self.top, self.width, self.height))
+        screen.blit(self.image, (0, 0), area=(self.shown.left, self.shown.top, self.shown.width, self.shown.height))
 
     def move_up(self):
         real_step = self.Barriers.can_pass_up(self.char, char_steps)
@@ -260,10 +292,10 @@ class rpg_board(pygame.Rect):
             self.char.direction = 1
             self.char.breath()
             return
-        self.top = self.top - real_step
+        self.shown.top = self.shown.top - real_step
         self.blit_board()
         self.char.walk(1)
-        pygame.display.update()
+
 
     def move_down(self):
         real_step = self.Barriers.can_pass_down(self.char, char_steps)
@@ -271,10 +303,10 @@ class rpg_board(pygame.Rect):
             self.char.direction = 3
             self.char.breath()
             return
-        self.top = self.top + real_step
+        self.shown.top = self.shown.top + real_step
         self.blit_board()
         self.char.walk(3)
-        pygame.display.update()
+
 
     def move_left(self):
         real_step = self.Barriers.can_pass_left(self.char, char_steps)
@@ -282,10 +314,10 @@ class rpg_board(pygame.Rect):
             self.char.direction = 4
             self.char.breath()
             return
-        self.left = self.left - real_step
+        self.shown.left = self.shown.left - real_step
         self.blit_board()
         self.char.walk(4)
-        pygame.display.update()
+
 
     def move_right(self):
         real_step = self.Barriers.can_pass_right(self.char, char_steps)
@@ -293,13 +325,15 @@ class rpg_board(pygame.Rect):
             self.char.direction = 2
             self.char.breath()
             return
-        self.left = self.left + real_step
+        self.shown.left = self.shown.left + real_step
         self.blit_board()
         self.char.walk(2)
-        pygame.display.update()
 
 
+
+orc1 = Orcs()
 board = rpg_board(1000, 1000)
+board.char.update_normal()
 finish = False
 while not finish:
     for event in pygame.event.get():
@@ -310,5 +344,6 @@ while not finish:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_ESCAPE]:
         finish = True
+
 
 pygame.quit()
