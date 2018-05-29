@@ -61,6 +61,7 @@ class main_character(Sprite):
                 board.move_left()
             elif keys[pygame.K_d]:
                 board.move_right()
+            orc1.update()
             pygame.display.update()
         else:
             board.char.breath()
@@ -74,6 +75,7 @@ class main_character(Sprite):
         else:
             self.image_bliting('Textures/Skins/Main_Char/Animation/B/B2.png', self.screen_pos.left, self.screen_pos.top, self.calc_angle())
             self.state = 1
+        orc1.update()
         pygame.display.update()
         for x in range(1000):
             pygame.time.delay(1)
@@ -104,7 +106,6 @@ class Orcs(Sprite):
         self.direction = 1
         super(Orcs, self).__init__(0, 0, 6000, 2000, 87, 64)
         self.add(orc_group)
-
 
     def visible(self):
         if self.board_pos.colliderect(board.shown):
@@ -296,7 +297,6 @@ class rpg_board(object):
         self.blit_board()
         self.char.walk(1)
 
-
     def move_down(self):
         real_step = self.Barriers.can_pass_down(self.char, char_steps)
         if real_step == 0:
@@ -306,7 +306,6 @@ class rpg_board(object):
         self.shown.top = self.shown.top + real_step
         self.blit_board()
         self.char.walk(3)
-
 
     def move_left(self):
         real_step = self.Barriers.can_pass_left(self.char, char_steps)
@@ -318,7 +317,6 @@ class rpg_board(object):
         self.blit_board()
         self.char.walk(4)
 
-
     def move_right(self):
         real_step = self.Barriers.can_pass_right(self.char, char_steps)
         if real_step == 0:
@@ -328,7 +326,6 @@ class rpg_board(object):
         self.shown.left = self.shown.left + real_step
         self.blit_board()
         self.char.walk(2)
-
 
 
 orc1 = Orcs()
