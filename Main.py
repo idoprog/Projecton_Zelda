@@ -66,7 +66,6 @@ class main_character(Sprite):
         else:
             board.char.breath()
 
-
     def breath(self):
         board.blit_board()
         if self.state == 1:
