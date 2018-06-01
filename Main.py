@@ -1,4 +1,5 @@
 import pygame
+import time
 import ctypes
 pygame.init()
 user32 = ctypes.windll.user32
@@ -41,16 +42,16 @@ class main_character(Sprite):
         self.direction = 1
         self.moving_seq = 1
         self.add(main_group)
-        self.dirty = 2
         self.state = None
         self.normal_image = 'Textures/Skins/Main_Char/MC_S.png'
+        self.now_showing = 'Textures/Skins/Main_Char/MC_S.png'
 
     def update_normal(self):
         board.blit_board()
         self.image_bliting(self.normal_image, self.screen_pos.left, self.screen_pos.top, self.calc_angle())
-        pygame.display.update()
 
     def update(self):
+        board.blit_board()
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w] or keys[pygame.K_s] or keys[pygame.K_a] or keys[pygame.K_d]:
             if keys[pygame.K_w]:
@@ -62,19 +63,24 @@ class main_character(Sprite):
             elif keys[pygame.K_d]:
                 board.move_right()
             orc1.update()
+            orc1.blit_showing()
             pygame.display.update()
         else:
-            board.char.breath()
+            self.breath()
+            pygame.display.update()
 
     def breath(self):
         board.blit_board()
         if self.state == 1:
             self.image_bliting('Textures/Skins/Main_Char/Animation/B/B1.png', self.screen_pos.left, self.screen_pos.top, self.calc_angle())
+            self.now_showing = 'Textures/Skins/Main_Char/Animation/B/B1.png'
             self.state = 2
         else:
             self.image_bliting('Textures/Skins/Main_Char/Animation/B/B2.png', self.screen_pos.left, self.screen_pos.top, self.calc_angle())
+            self.now_showing = 'Textures/Skins/Main_Char/Animation/B/B2.png'
             self.state = 1
         orc1.update()
+        orc1.blit_showing()
         pygame.display.update()
         for x in range(1000):
             pygame.time.delay(1)
@@ -85,10 +91,12 @@ class main_character(Sprite):
     def walk(self, d):
         if self.direction == d:
             self.image_bliting('Textures\Skins\Main_Char\Animation\W\W' + str(self.moving_seq) + '.png', self.screen_pos.left, self.screen_pos.top, self.calc_angle())
+            self.now_showing = 'Textures\Skins\Main_Char\Animation\W\W' + str(self.moving_seq) + '.png'
         else:
             self.moving_seq = 1
             self.direction = d
             self.image_bliting('Textures\Skins\Main_Char\Animation\W\W1.png', self.screen_pos.left, self.screen_pos.top, self.calc_angle())
+            self.now_showing = 'Textures\Skins\Main_Char\Animation\W\W1.png'
         self.moving_seq = self.moving_seq + 1
         if self.moving_seq == 35:
             self.moving_seq = 1
@@ -102,9 +110,16 @@ class main_character(Sprite):
 
 class Orcs(Sprite):
     def __init__(self):
+        super(Orcs, self).__init__(0, 0, 1600, 2000, 87, 64)
         self.direction = 1
-        super(Orcs, self).__init__(0, 0, 6000, 2000, 87, 64)
+        self.moving_seq = 1
+        self.state = 1
         self.add(orc_group)
+        self.now_showing = 'Textures/Skins/Orcs/1/Animation/B/B1.png'
+        self.start = -1.0
+
+    def blit_showing(self):
+        self.image_bliting(self.now_showing, self.screen_pos.left, self.screen_pos.top, self.calc_angle())
 
     def visible(self):
         if self.board_pos.colliderect(board.shown):
@@ -118,8 +133,39 @@ class Orcs(Sprite):
 
     def update(self):
         if self.visible():
+
             self.calc_board_pos()
-            self.image_bliting('Textures/Skins/Orcs/1/Orc_S1.png', self.screen_pos.left, self.screen_pos.top, self.calc_angle())
+            # self.image_bliting('Textures/Skins/Orcs/1/Orc_S1.png', self.screen_pos.left, self.screen_pos.top, self.calc_angle())
+            self.breath()
+
+    def walk(self, d):
+        if self.direction == d:
+            self.image_bliting('Textures/Skins/Orcs/1/W' + str(self.moving_seq) + '.png', self.screen_pos.left, self.screen_pos.top, self.calc_angle())
+            self.now_showing = 'Textures/Skins/Orcs/1/W' + str(self.moving_seq) + '.png'
+        else:
+            self.moving_seq = 1
+            self.direction = d
+            self.image_bliting('Textures/Skins/Orcs/1/W/W1', self.screen_pos.left, self.screen_pos.top, self.calc_angle())
+            self.now_showing = 'Textures/Skins/Orcs/1/W1.png'
+        if self.moving_seq == 35:
+            self.moving_seq = 1
+        pygame.time.delay(20)
+
+    def breath(self):
+        if self.state == 1:
+            if self.start == -1.0 or time.time() - self.start > 1:
+                print 'lol'
+                self.image_bliting('Textures/Skins/Orcs/1/Animation/B/B1.png', self.screen_pos.left, self.screen_pos.top, self.calc_angle())
+                self.now_showing = 'Textures/Skins/Orcs/1/Animation/B/B1.png'
+                self.state = 2
+                self.start = time.time()
+        else:
+            if time.time() - self.start > 1:
+                print 'lel'
+                self.image_bliting('Textures/Skins/Orcs/1/Animation/B/B2.png', self.screen_pos.left, self.screen_pos.top, self.calc_angle())
+                self.now_showing = 'Textures/Skins/Orcs/1/Animation/B/B2.png'
+                self.state = 1
+                self.start = time.time()
 
 
 class Barriers(object):
@@ -271,6 +317,7 @@ class Barriers(object):
                 return x
         return steps
 
+
 class rpg_board(object):
     def __init__(self, start_x=0, start_y=0):
         self.shown = pygame.Rect(start_x, start_y, start_x + width, start_y + height)
@@ -327,9 +374,9 @@ class rpg_board(object):
         self.char.walk(2)
 
 
-orc1 = Orcs()
 board = rpg_board(1000, 1000)
 board.char.update_normal()
+orc1 = Orcs()
 finish = False
 while not finish:
     for event in pygame.event.get():
